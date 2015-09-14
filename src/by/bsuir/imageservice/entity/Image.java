@@ -1,13 +1,23 @@
 package by.bsuir.imageservice.entity;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 
 import by.bsuir.imageservice.cache.Cacheable;
 
-public class Image implements Cacheable {
+/**
+ * Image entity class. Contains file name, url, output file and date of
+ * expiration
+ * 
+ * @author Mikhail_Sadouski
+ *
+ */
+public class Image implements Cacheable, Serializable {
+
+	private static final long serialVersionUID = 3223334255818691443L;
 
 	private String name;
 	private URL url;

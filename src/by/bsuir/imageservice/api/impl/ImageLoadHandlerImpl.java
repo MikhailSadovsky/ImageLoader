@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 
 import by.bsuir.imageservice.api.MatchHandler;
 
-public class LoadHandlerImpl implements MatchHandler {
+public class ImageLoadHandlerImpl implements MatchHandler {
 
 	@Override
 	public boolean isMatch(String urlString) {
@@ -23,7 +23,7 @@ public class LoadHandlerImpl implements MatchHandler {
 
 	@Override
 	public void load(URL url, File outputPath, ExecutorService threadService) {
-		threadService.execute(new Loader(url, outputPath));
+		threadService.execute(new ImageLoader(url, outputPath));
 	}
 
 }

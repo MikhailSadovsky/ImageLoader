@@ -30,10 +30,10 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
-import by.bsuir.imageservice.api.ImageService;
+import by.bsuir.imageservice.api.LoadService;
 import by.bsuir.imageservice.api.LoadHandler;
-import by.bsuir.imageservice.api.impl.ImageServiceImpl;
-import by.bsuir.imageservice.api.impl.LoadHandlerImpl;
+import by.bsuir.imageservice.api.impl.ImageLoadServiceImpl;
+import by.bsuir.imageservice.api.impl.ImageLoadHandlerImpl;
 import by.bsuir.imageservice.exception.ProjectException;
 
 /**
@@ -56,7 +56,7 @@ public class GUI extends JFrame {
 
 	private static ExecutorService threadPool;
 
-	private List<ImageService> services;
+	private List<LoadService> services;
 
 	/**
 	 * Launch the application.
@@ -71,8 +71,8 @@ public class GUI extends JFrame {
 	}
 
 	private void extractGUI() {
-		services = new ArrayList<ImageService>();
-		services.add(new ImageServiceImpl());
+		services = new ArrayList<LoadService>();
+		services.add(new ImageLoadServiceImpl());
 		setBackground(SystemColor.WHITE);
 		setTitle("Image Downloader");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -199,8 +199,8 @@ public class GUI extends JFrame {
 	}
 
 	private void loading(String url, String path) {
-		LoadHandler selectedHandler = new LoadHandlerImpl();
-		for (ImageService service : services) {
+		LoadHandler selectedHandler = new ImageLoadHandlerImpl();
+		for (LoadService service : services) {
 			LoadHandler searchHandler;
 			searchHandler = service.getHandler(url);
 			selectedHandler = searchHandler;

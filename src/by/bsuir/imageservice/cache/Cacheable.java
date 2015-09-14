@@ -1,17 +1,24 @@
 package by.bsuir.imageservice.cache;
 
+/**
+ * Interface for objects, that should be cached
+ * 
+ * @author Mikhail_Sadouski
+ *
+ */
 public interface Cacheable {
-	/*
-	 * By requiring all objects to determine their own expirations, the
-	 * algorithm is abstracted from the caching service, thereby providing
-	 * maximum flexibility since each object can adopt a different expiration
-	 * strategy.
+
+	/**
+	 * Checks, that time for cache saving is expire
+	 * 
+	 * @return true, if object expire and false otherwise
 	 */
 	public boolean isExpired();
 
-	/*
-	 * This method will ensure that the caching service is not responsible for
-	 * uniquely identifying objects placed in the cache.
+	/**
+	 * Return identifier for object caching
+	 * 
+	 * @return unique identifier
 	 */
 	public Object getIdentifier();
 }

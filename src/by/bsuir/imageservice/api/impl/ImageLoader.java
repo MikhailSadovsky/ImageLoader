@@ -14,20 +14,33 @@ import by.bsuir.imageservice.cache.CacheManager;
 import by.bsuir.imageservice.entity.Image;
 import by.bsuir.imageservice.exception.ProjectException;
 
-public class Loader implements Runnable {
-	private static final Logger log = Logger.getLogger(Loader.class);
+/**
+ * Loader - instance for loading image simultaneously.
+ * 
+ * @author Mikhail_Sadouski
+ *
+ */
+public class ImageLoader implements Runnable {
+	private static final Logger log = Logger.getLogger(ImageLoader.class);
 
-	private static final int DEFAULT_MINUTES_TO_LIVE = 1;
+	/**
+	 * Defaults minutes for living loading image file in cache
+	 */
+	private static final int DEFAULT_MINUTES_TO_LIVE = 3;
 	private static final int BUFFERSIZE = 1024 * 1024;
 
 	private URL url;
 	private File outputDirectory;
 
-	public Loader(URL url, File outputDirectory) {
+	public ImageLoader(URL url, File outputDirectory) {
 		this.url = url;
 		this.outputDirectory = outputDirectory;
 	}
 
+	/**
+	 * Create image instance and caching
+	 * 
+	 **/
 	@Override
 	public void run() {
 		log.info("Loader start working");
@@ -75,6 +88,18 @@ public class Loader implements Runnable {
 
 	}
 
+	/**
+	 * Return file name by url last part (after last slash symbol).
+	 * <p>
+	 * For example, if url like this:
+	 * http://encrypted.gstatic.com/firstImage.jpg, than it return
+	 * firstImage.jpg
+	 * <p>
+	 * 
+	 * @param loading
+	 *            url
+	 * @return output file name
+	 */
 	private String createOuputFilename(URL url) {
 		String imgPath = url.getPath();
 		int lastSlash = imgPath.lastIndexOf('/');
