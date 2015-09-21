@@ -12,7 +12,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,17 +32,20 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
 
-import by.bsuir.imageservice.api.LoadService;
 import by.bsuir.imageservice.api.LoadHandler;
-import by.bsuir.imageservice.api.impl.ImageLoadServiceImpl;
+import by.bsuir.imageservice.api.LoadService;
 import by.bsuir.imageservice.api.impl.ImageLoadHandlerImpl;
+import by.bsuir.imageservice.api.impl.ImageLoadServiceImpl;
+import by.bsuir.imageservice.cache.CacheManager;
+import by.bsuir.imageservice.cache.Cacheable;
+import by.bsuir.imageservice.entity.Image;
 import by.bsuir.imageservice.exception.ProjectException;
 
 /**
  * This class is used to display the GUI that will allow the user to download
  * images from a webpage of their choosing.
  * 
- *
+ * 
  */
 public class GUI extends JFrame {
 
@@ -53,6 +58,7 @@ public class GUI extends JFrame {
 	private JTextField threadsInput;
 	private JTable imageDetailsTable;
 	private Component errorFrame;
+	private DefaultTableModel defaultTable;
 
 	private static ExecutorService threadPool;
 
@@ -71,6 +77,7 @@ public class GUI extends JFrame {
 	}
 
 	private void extractGUI() {
+		CacheManager.setGUI(this);
 		services = new ArrayList<LoadService>();
 		services.add(new ImageLoadServiceImpl());
 		setBackground(SystemColor.WHITE);
@@ -153,7 +160,7 @@ public class GUI extends JFrame {
 		threadsInput.setColumns(10);
 
 		String[] columns = { "File name", "File URL" };
-		final DefaultTableModel defaultTable = new DefaultTableModel(columns, 0);
+		defaultTable = new DefaultTableModel(columns, 0);
 
 		imageDetailsTable = new JTable(defaultTable);
 		imageDetailsTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -177,11 +184,11 @@ public class GUI extends JFrame {
 								"The number of threads must be between 1 and 8!",
 								"Invalid number of threads!");
 					} else {
+						String url = websiteInput.getText();
+						String path = locationInput.getText();
 						threadPool = Executors.newFixedThreadPool(Integer
 								.parseInt(threadsInput.getText()));
-						loading(websiteInput.getText(), locationInput.getText());
-						threadPool.shutdown();
-						defaultTable.setRowCount(0);
+						loading(url, path);
 						imageDetailsTable.updateUI();
 
 					}
@@ -224,6 +231,9 @@ public class GUI extends JFrame {
 				"Do you really want to quit?", "Quit?",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (response == JOptionPane.YES_OPTION) {
+			if (null != threadPool) {
+				threadPool.shutdown();
+			}
 			System.exit(0);
 		}
 	}
@@ -233,4 +243,18 @@ public class GUI extends JFrame {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
+	/**
+	 * Updates table, when image was added or removed
+	 * 
+	 * @param imageMap
+	 */
+	public void updateImageTable(Map<Object, Cacheable> imageMap) {
+		defaultTable.setRowCount(0);
+		for (Iterator<Object> it = imageMap.keySet().iterator(); it.hasNext();) {
+			Object key = it.next();
+			Image image = (Image) imageMap.get(key);
+			defaultTable.addRow(new String[] { image.getName(),
+					image.getIdentifier() });
+		}
+	}
 }

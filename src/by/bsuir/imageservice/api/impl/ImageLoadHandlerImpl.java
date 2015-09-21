@@ -10,6 +10,11 @@ import by.bsuir.imageservice.api.MatchHandler;
 
 public class ImageLoadHandlerImpl implements MatchHandler {
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see by.bsuir.imageservice.api.MatchHandler#isMatch(java.lang.String)
+	 */
 	@Override
 	public boolean isMatch(String urlString) {
 		try {
@@ -21,6 +26,12 @@ public class ImageLoadHandlerImpl implements MatchHandler {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see by.bsuir.imageservice.api.LoadHandler#load(java.net.URL,
+	 * java.io.File, java.util.concurrent.ExecutorService)
+	 */
 	@Override
 	public void load(URL url, File outputPath, ExecutorService threadService) {
 		threadService.execute(new ImageLoader(url, outputPath));

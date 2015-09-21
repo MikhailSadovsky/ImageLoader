@@ -1,6 +1,7 @@
 package by.bsuir.imageservice.cache;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -8,13 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
+import by.bsuir.imageservice.GUI;
 import by.bsuir.imageservice.exception.ProjectException;
 
 /**
  * CacheManager simplify operations for holding cacheable objects
  * 
  * @author Mikhail_Sadouski
- *
+ * 
  */
 public class CacheManager {
 	private static final Logger log = Logger.getLogger(CacheManager.class);
@@ -24,6 +26,7 @@ public class CacheManager {
 	 */
 	private static final int DEFAULT_MILLISECOND_SLEEP_TIME = 5000;
 	private static Map<Object, Cacheable> cacheHashMap = new ConcurrentHashMap<Object, Cacheable>();
+	private static GUI gui;
 
 	private static volatile int size = 1024 * 1024;
 
@@ -47,6 +50,7 @@ public class CacheManager {
 									File outputFile = new File(key.toString());
 									if (outputFile.delete()) {
 										cacheHashMap.remove(key);
+										gui.updateImageTable(getCacheMap());
 										log.info("Item " + key
 												+ " was deleted ");
 									} else {
@@ -62,6 +66,7 @@ public class CacheManager {
 					}
 					return;
 				}
+
 			});
 			cleaner.setPriority(Thread.MIN_PRIORITY);
 			cleaner.start();
@@ -78,6 +83,7 @@ public class CacheManager {
 	 */
 	public static void putObject(Cacheable object) {
 		cacheHashMap.put(object.getIdentifier(), object);
+		gui.updateImageTable(getCacheMap());
 	}
 
 	/**
@@ -104,5 +110,15 @@ public class CacheManager {
 
 	public int getActualSize() {
 		return size;
+	}
+
+	public static void setGUI(GUI gui) {
+		CacheManager.gui = gui;
+	}
+
+	public static Map<Object, Cacheable> getCacheMap() {
+		Map<Object, Cacheable> shallowCopy = new HashMap<Object, Cacheable>();
+		shallowCopy.putAll(cacheHashMap);
+		return shallowCopy;
 	}
 }
