@@ -25,6 +25,8 @@ public class CacheManager {
 	private static final int DEFAULT_MILLISECOND_SLEEP_TIME = 5000;
 	private static Map<Object, Cacheable> cacheHashMap = new ConcurrentHashMap<Object, Cacheable>();
 
+	private static volatile int size = 1024 * 1024;
+
 	/**
 	 * Initialize cleaner thread, that checks objects for expiring and remove
 	 */
@@ -94,5 +96,13 @@ public class CacheManager {
 		} else {
 			return object;
 		}
+	}
+
+	public synchronized static void reduceSize(int writtenCount) {
+		size -= writtenCount;
+	}
+
+	public int getActualSize() {
+		return size;
 	}
 }
